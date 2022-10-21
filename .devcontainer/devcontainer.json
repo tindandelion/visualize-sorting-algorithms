@@ -22,7 +22,8 @@
 				"k--kato.intellij-idea-keybindings",
 				"Vue.volar",
 				"Vue.vscode-typescript-vue-plugin",
-				"hollowtree.vue-snippets"
+				"hollowtree.vue-snippets",
+				"esbenp.prettier-vscode"
 			]
 		}
 	},

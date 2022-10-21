@@ -19,7 +19,9 @@
 			// Add the IDs of extensions you want installed when the container is created.
 			"extensions": [
 				"dbaeumer.vscode-eslint",
-				"k--kato.intellij-idea-keybindings"
+				"k--kato.intellij-idea-keybindings",
+				"Vue.volar",
+				"Vue.vscode-typescript-vue-plugin"
 			]
 		}
 	},

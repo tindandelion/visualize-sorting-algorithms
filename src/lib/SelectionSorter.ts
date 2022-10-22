@@ -1,6 +1,6 @@
-import { Sorter } from './Sorter'
+import { SortingSnapshot } from './Sorter'
 
-export class SelectionSorter implements Sorter {
+export class SelectionSorter {
   private _currentIndex = 0
   constructor(readonly data: number[]) {}
 
@@ -8,6 +8,13 @@ export class SelectionSorter implements Sorter {
     const smallestIndex = this.findNextSmallestIndex()
     this.swapCurrentElement(smallestIndex)
     this._currentIndex++
+  }
+
+  takeSnapshot(): SortingSnapshot {
+    return {
+      data: [...this.data],
+      currentIndex: this._currentIndex,
+    }
   }
 
   get currentIndex() {

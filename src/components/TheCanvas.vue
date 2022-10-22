@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { Sorter } from '@/lib/Sorter'
+import { SortingSnapshot } from '@/lib/Sorter'
 import p5 from 'p5'
 import { defineComponent, PropType } from 'vue'
 
@@ -23,7 +23,7 @@ type ComponentData = {
 export default defineComponent({
   name: 'MainCanvas',
   props: {
-    sorter: { type: Object as PropType<Sorter>, required: true },
+    snapshot: { type: Object as PropType<SortingSnapshot>, required: true },
   },
 
   data(): ComponentData {
@@ -42,11 +42,17 @@ export default defineComponent({
     },
 
     dataPoints() {
-      return this.sorter.data
+      return this.snapshot.data
     },
 
     barWidth() {
       return DRAWABLE_AREA.width / this.dataPoints.length - BAR_PADDING
+    },
+  },
+
+  watch: {
+    snapshot() {
+      this.canvas?.redraw()
     },
   },
 
@@ -55,43 +61,42 @@ export default defineComponent({
       const s = (p: p5) => {
         p.setup = () => {
           p.createCanvas(CANVAS_SIZE.width, CANVAS_SIZE.height)
+          p.noLoop()
         }
         p.draw = this.draw
       }
       return new p5(s, this.$refs.canvas as HTMLElement)
     },
 
-    forEachDataPoint(callback: (index: number, value: number) => void) {
-      for (let i = 0; i < this.dataPoints.length; i++) {
-        callback(i, this.dataPoints[i])
-      }
-    },
-
     draw() {
       if (!this.canvas) return
       this.canvas.background(220)
-
       this.drawBarchart(this.canvas)
     },
 
-    pickValueColor(canvas: p5, value: number) {
+    pickValueColor(canvas: p5, index: number, value: number) {
       const hue = (255 * value) / this.maxValue
-      return canvas.color(`hsb(${hue.toFixed(0)}, 100%, 100%)`)
+      const brightness = index < this.snapshot.currentIndex ? 100 : 50
+      return canvas.color(`hsb(${hue.toFixed(0)}, 100%, ${brightness}%)`)
     },
 
     drawBarchart(canvas: p5) {
-      this.forEachDataPoint((i, value) => {
-        const startX = CANVAS_PADDING + i * (this.barWidth + BAR_PADDING)
-        const barHeight = (DRAWABLE_AREA.height * value) / this.maxValue
+      for (let i = 0; i < this.dataPoints.length; i++) {
+        this.drawValueAsBar(canvas, i, this.dataPoints[i])
+      }
+    },
 
-        const startY = CANVAS_SIZE.height - barHeight - CANVAS_PADDING
+    drawValueAsBar(canvas: p5, i: number, value: number) {
+      const startX = CANVAS_PADDING + i * (this.barWidth + BAR_PADDING)
+      const barHeight = (DRAWABLE_AREA.height * value) / this.maxValue
 
-        const color = this.pickValueColor(canvas, value)
-        canvas.stroke(color)
-        canvas.fill(color)
+      const startY = CANVAS_SIZE.height - barHeight - CANVAS_PADDING
 
-        canvas.rect(startX, startY, this.barWidth, barHeight)
-      })
+      const color = this.pickValueColor(canvas, i, value)
+      canvas.stroke(color)
+      canvas.fill(color)
+
+      canvas.rect(startX, startY, this.barWidth, barHeight)
     },
   },
 })

@@ -1,5 +1,5 @@
 <template>
-  <the-canvas :sorter="sorter" />
+  <the-canvas :snapshot="snapshot" />
 </template>
 
 <script lang="ts">
@@ -11,6 +11,8 @@ function generateDataPoints(n: number, maxValue: number) {
   return [...new Array(n).keys()].map(() => Math.random() * maxValue)
 }
 
+const SORT_INTERVAL = 100
+
 export default defineComponent({
   name: 'App',
   components: {
@@ -19,18 +21,16 @@ export default defineComponent({
 
   data() {
     const dataPoints = generateDataPoints(200, 1)
-    return { sorter: new SelectionSorter(dataPoints) }
+    const sorter = new SelectionSorter(dataPoints)
+    return { sorter, snapshot: sorter.takeSnapshot() }
   },
 
   mounted() {
-    const interval = setInterval(
-      (sorter: SelectionSorter) => {
-        sorter.step()
-        if (sorter.isFinished) clearInterval(interval)
-      },
-      100,
-      this.sorter
-    )
+    const interval = setInterval(() => {
+      this.sorter.step()
+      this.snapshot = this.sorter.takeSnapshot()
+      if (this.sorter.isFinished) clearInterval(interval)
+    }, SORT_INTERVAL)
   },
 })
 </script>

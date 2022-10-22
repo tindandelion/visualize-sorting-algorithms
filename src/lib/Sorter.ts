@@ -1,4 +1,4 @@
-export interface Sorter {
+export interface SortingSnapshot {
   readonly data: number[]
   readonly currentIndex: number
 }

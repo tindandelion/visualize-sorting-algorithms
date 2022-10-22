@@ -9,16 +9,19 @@ describe('Selection sorter', () => {
   })
 
   it('initializes sorter', () => {
-    expect(sorter.data).toEqual(array)
-    expect(sorter.currentIndex).toEqual(0)
+    const snapshot = sorter.takeSnapshot()
+
+    expect(snapshot.data).toEqual(array)
+    expect(snapshot.currentIndex).toEqual(0)
     expect(sorter.isFinished).toEqual(false)
   })
 
   it('makes a single step', () => {
     sorter.step()
+    const snapshot = sorter.takeSnapshot()
 
-    expect(sorter.data).toEqual([1, 3, 4, 5, 2])
-    expect(sorter.currentIndex).toEqual(1)
+    expect(snapshot.data).toEqual([1, 3, 4, 5, 2])
+    expect(snapshot.currentIndex).toEqual(1)
     expect(sorter.isFinished).toEqual(false)
   })
 
@@ -27,8 +30,9 @@ describe('Selection sorter', () => {
     const sorter = new SelectionSorter(array)
 
     while (!sorter.isFinished) sorter.step()
+    const snapshot = sorter.takeSnapshot()
 
-    expect(sorter.data).toEqual([1, 2, 3, 4, 5])
-    expect(sorter.currentIndex).toEqual(5)
+    expect(snapshot.data).toEqual([1, 2, 3, 4, 5])
+    expect(snapshot.currentIndex).toEqual(5)
   })
 })

@@ -1,5 +1,5 @@
 export class SelectionSorter {
-  private _currentIndex: number = 0
+  private _currentIndex = 0
   constructor(readonly data: number[]) {}
 
   step() {

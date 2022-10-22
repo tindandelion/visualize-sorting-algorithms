@@ -1,4 +1,6 @@
-export class SelectionSorter {
+import { Sorter } from './Sorter'
+
+export class SelectionSorter implements Sorter {
   private _currentIndex = 0
   constructor(readonly data: number[]) {}
 

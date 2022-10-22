@@ -1,5 +1,5 @@
 <template>
-  <the-canvas :data-points="dataPoints" />
+  <the-canvas :sorter="sorter" />
 </template>
 
 <script lang="ts">
@@ -18,7 +18,8 @@ export default defineComponent({
   },
 
   data() {
-    return { dataPoints: generateDataPoints(200, 1) }
+    const dataPoints = generateDataPoints(200, 1)
+    return { sorter: new SelectionSorter(dataPoints) }
   },
 
   mounted() {
@@ -28,7 +29,7 @@ export default defineComponent({
         if (sorter.isFinished) clearInterval(interval)
       },
       100,
-      new SelectionSorter(this.dataPoints)
+      this.sorter
     )
   },
 })

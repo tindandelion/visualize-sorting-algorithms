@@ -3,8 +3,9 @@
 </template>
 
 <script lang="ts">
+import { Sorter } from '@/lib/Sorter'
 import p5 from 'p5'
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 
 const CANVAS_SIZE = { width: 900, height: 400 }
 const CANVAS_PADDING = 6
@@ -22,7 +23,7 @@ type ComponentData = {
 export default defineComponent({
   name: 'MainCanvas',
   props: {
-    dataPoints: { type: Array<number>, required: true },
+    sorter: { type: Object as PropType<Sorter>, required: true },
   },
 
   data(): ComponentData {
@@ -38,6 +39,10 @@ export default defineComponent({
   computed: {
     maxValue() {
       return Math.max(...this.dataPoints)
+    },
+
+    dataPoints() {
+      return this.sorter.data
     },
 
     barWidth() {

@@ -23,6 +23,9 @@ describe('Selection sorter', () => {
   })
 
   it('sorts the entire array', () => {
+    const array = [5, 3, 4, 1, 2]
+    const sorter = new SelectionSorter(array)
+
     while (!sorter.isFinished) sorter.step()
 
     expect(sorter.data).toEqual([1, 2, 3, 4, 5])

@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import p5 from 'p5'
+import p5, { Color } from 'p5'
 
 import { SortingSnapshot } from '@/lib/domain/Sorter'
 import {
@@ -13,13 +13,7 @@ import {
 } from '@/lib/view-models/BarchartViewModel'
 
 const CANVAS_SIZE = { width: 900, height: 400 }
-const CANVAS_PADDING = 6
 const BAR_PADDING = 2
-
-const DRAWABLE_AREA = {
-  width: CANVAS_SIZE.width - CANVAS_PADDING * 2,
-  height: CANVAS_SIZE.height - CANVAS_PADDING * 2,
-}
 
 type ComponentData = {
   canvas?: p5
@@ -80,24 +74,22 @@ export default defineComponent({
     },
 
     drawBarchart(canvas: p5) {
-      const viewModel = new BarchartViewModel(this.snapshot, CANVAS_SIZE.width)
+      const viewModel = new BarchartViewModel(
+        this.snapshot,
+        CANVAS_SIZE.width,
+        CANVAS_SIZE.height
+      )
       viewModel.spaceBetweenBars = BAR_PADDING
-
-      for (let i = 0; i < this.dataPoints.length; i++) {
-        this.drawValueAsBar(canvas, i, this.dataPoints[i], viewModel.bars)
-      }
+      viewModel.forEachBar((index, bar) => {
+        const color = this.pickValueColor(canvas, index, bar.value)
+        this.drawBar(canvas, bar, color)
+      })
     },
 
-    drawValueAsBar(canvas: p5, i: number, value: number, bars: BarchartBar[]) {
-      const barHeight = (DRAWABLE_AREA.height * value) / this.maxValue
-
-      const startY = CANVAS_SIZE.height - barHeight - CANVAS_PADDING
-
-      const color = this.pickValueColor(canvas, i, value)
+    drawBar(canvas: p5, bar: BarchartBar, color: Color) {
       canvas.stroke(color)
       canvas.fill(color)
-
-      canvas.rect(bars[i].x, startY, bars[i].width, barHeight)
+      canvas.rect(bar.x, bar.y, bar.width, bar.height)
     },
   },
 })

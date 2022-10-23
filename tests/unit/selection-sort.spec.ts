@@ -1,4 +1,4 @@
-import { SelectionSorter } from '@/lib/SelectionSorter'
+import { SelectionSorter } from '@/lib/domain/SelectionSorter'
 
 describe('Selection sorter', () => {
   const array = [5, 3, 4, 1, 2]

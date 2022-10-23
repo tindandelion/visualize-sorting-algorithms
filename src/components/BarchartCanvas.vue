@@ -3,9 +3,10 @@
 </template>
 
 <script lang="ts">
-import { SortingSnapshot } from '@/lib/Sorter'
-import p5 from 'p5'
 import { defineComponent, PropType } from 'vue'
+import p5 from 'p5'
+
+import { SortingSnapshot } from '@/lib/domain/Sorter'
 
 const CANVAS_SIZE = { width: 900, height: 400 }
 const CANVAS_PADDING = 6

@@ -21,19 +21,17 @@ type ComponentData = {
 }
 
 export default defineComponent({
-  name: 'MainCanvas',
+  name: 'BarchartCanvas',
   props: {
     snapshot: { type: Object as PropType<SortingSnapshot>, required: true },
   },
 
   data(): ComponentData {
-    return {
-      canvas: undefined,
-    }
+    return {}
   },
 
   mounted() {
-    this.canvas = this.createCanvas()
+    this.canvas = this.createCanvas(this.$refs.canvas as HTMLElement)
   },
 
   computed: {
@@ -57,7 +55,7 @@ export default defineComponent({
   },
 
   methods: {
-    createCanvas() {
+    createCanvas(el: HTMLElement) {
       const s = (p: p5) => {
         p.setup = () => {
           p.createCanvas(CANVAS_SIZE.width, CANVAS_SIZE.height)
@@ -65,7 +63,7 @@ export default defineComponent({
         }
         p.draw = this.draw
       }
-      return new p5(s, this.$refs.canvas as HTMLElement)
+      return new p5(s, el)
     },
 
     draw() {

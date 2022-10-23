@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import TheCanvas from './components/TheCanvas.vue'
+import TheCanvas from './components/BarchartCanvas.vue'
 import { SelectionSorter } from './lib/SelectionSorter'
 
 function generateDataPoints(n: number, maxValue: number) {

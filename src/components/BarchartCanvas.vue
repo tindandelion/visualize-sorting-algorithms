@@ -7,6 +7,10 @@ import { defineComponent, PropType } from 'vue'
 import p5 from 'p5'
 
 import { SortingSnapshot } from '@/lib/domain/Sorter'
+import {
+  BarchartBar,
+  BarchartViewModel,
+} from '@/lib/view-models/BarchartViewModel'
 
 const CANVAS_SIZE = { width: 900, height: 400 }
 const CANVAS_PADDING = 6
@@ -43,10 +47,6 @@ export default defineComponent({
     dataPoints() {
       return this.snapshot.data
     },
-
-    barWidth() {
-      return DRAWABLE_AREA.width / this.dataPoints.length - BAR_PADDING
-    },
   },
 
   watch: {
@@ -80,13 +80,15 @@ export default defineComponent({
     },
 
     drawBarchart(canvas: p5) {
+      const viewModel = new BarchartViewModel(this.snapshot, CANVAS_SIZE.width)
+      viewModel.spaceBetweenBars = BAR_PADDING
+
       for (let i = 0; i < this.dataPoints.length; i++) {
-        this.drawValueAsBar(canvas, i, this.dataPoints[i])
+        this.drawValueAsBar(canvas, i, this.dataPoints[i], viewModel.bars)
       }
     },
 
-    drawValueAsBar(canvas: p5, i: number, value: number) {
-      const startX = CANVAS_PADDING + i * (this.barWidth + BAR_PADDING)
+    drawValueAsBar(canvas: p5, i: number, value: number, bars: BarchartBar[]) {
       const barHeight = (DRAWABLE_AREA.height * value) / this.maxValue
 
       const startY = CANVAS_SIZE.height - barHeight - CANVAS_PADDING
@@ -95,7 +97,7 @@ export default defineComponent({
       canvas.stroke(color)
       canvas.fill(color)
 
-      canvas.rect(startX, startY, this.barWidth, barHeight)
+      canvas.rect(bars[i].x, startY, bars[i].width, barHeight)
     },
   },
 })

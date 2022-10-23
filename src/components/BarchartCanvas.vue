@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import p5, { Color } from 'p5'
+import p5 from 'p5'
 
 import { SortingSnapshot } from '@/lib/domain/Sorter'
 import {
@@ -34,17 +34,19 @@ export default defineComponent({
   },
 
   computed: {
-    maxValue() {
-      return Math.max(...this.dataPoints)
+    viewModel(): BarchartViewModel {
+      const viewModel = new BarchartViewModel(this.snapshot, CANVAS_SIZE)
+      viewModel.spaceBetweenBars = BAR_PADDING
+      return viewModel
     },
 
-    dataPoints() {
-      return this.snapshot.data
+    bars() {
+      return this.viewModel.bars
     },
   },
 
   watch: {
-    snapshot() {
+    bars() {
       this.canvas?.redraw()
     },
   },
@@ -56,37 +58,16 @@ export default defineComponent({
           p.createCanvas(CANVAS_SIZE.width, CANVAS_SIZE.height)
           p.noLoop()
         }
-        p.draw = this.draw
+        p.draw = () => {
+          p.background(220)
+          this.viewModel.bars.forEach(this.drawSingleBar.bind(this, p))
+        }
       }
       return new p5(s, el)
     },
 
-    draw() {
-      if (!this.canvas) return
-      this.canvas.background(220)
-      this.drawBarchart(this.canvas)
-    },
-
-    pickValueColor(canvas: p5, index: number, value: number) {
-      const hue = (255 * value) / this.maxValue
-      const brightness = index < this.snapshot.currentIndex ? 100 : 50
-      return canvas.color(`hsb(${hue.toFixed(0)}, 100%, ${brightness}%)`)
-    },
-
-    drawBarchart(canvas: p5) {
-      const viewModel = new BarchartViewModel(
-        this.snapshot,
-        CANVAS_SIZE.width,
-        CANVAS_SIZE.height
-      )
-      viewModel.spaceBetweenBars = BAR_PADDING
-      viewModel.forEachBar((index, bar) => {
-        const color = this.pickValueColor(canvas, index, bar.value)
-        this.drawBar(canvas, bar, color)
-      })
-    },
-
-    drawBar(canvas: p5, bar: BarchartBar, color: Color) {
+    drawSingleBar(canvas: p5, bar: BarchartBar) {
+      const color = canvas.color(bar.color)
       canvas.stroke(color)
       canvas.fill(color)
       canvas.rect(bar.x, bar.y, bar.width, bar.height)

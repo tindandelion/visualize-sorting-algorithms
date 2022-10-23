@@ -13,8 +13,9 @@ interface Size {
   height: number
 }
 
-export class BarchartViewModel {
-  public spaceBetweenBars = 0
+export class BarchartCalculator {
+  private spaceBetweenBars = 0
+  private barWidth = 0
 
   private readonly maxValue: number
   private readonly heightScaleFactor: number
@@ -25,37 +26,39 @@ export class BarchartViewModel {
   ) {
     this.maxValue = Math.max(...this.snapshot.data)
     this.heightScaleFactor = this.canvasSize.height / this.maxValue
+    this.withSpaceBetweenBars(0)
   }
 
-  get bars(): BarchartBar[] {
-    const barWidth = this.calcBarWidth()
+  withSpaceBetweenBars(value: number): this {
+    this.spaceBetweenBars = value
+    this.barWidth =
+      this.canvasSize.width / this.snapshot.data.length - this.spaceBetweenBars
+    return this
+  }
+
+  calculateBars() {
     return this.snapshot.data.map((value, index) => {
       const barHeight = value * this.heightScaleFactor
       return {
-        x: this.calcPosX(index, barWidth),
+        x: this.calcPosX(index),
         y: this.canvasSize.height - barHeight,
-        width: barWidth,
+        width: this.barWidth,
         height: barHeight,
         color: this.pickBarColor(value, index),
       }
     })
   }
 
-  private calcBarWidth() {
-    return (
-      this.canvasSize.width / this.snapshot.data.length - this.spaceBetweenBars
-    )
-  }
-
   private pickBarColor(value: number, index: number) {
     const hue = (value / this.maxValue) * 255
-    const brightness = index < this.snapshot.currentIndex ? 100 : 50
-    return `hsb(${hue.toFixed(0)}, 100%, ${brightness}%)`
+    const saturation = index < this.snapshot.currentIndex ? 100 : 30
+    return `hsb(${hue.toFixed(0)}, ${saturation}%, 100%)`
   }
 
-  private calcPosX(barIndex: number, barWidth: number) {
+  private calcPosX(barIndex: number) {
     return (
-      this.spaceBetweenBars / 2 + barIndex * (barWidth + this.spaceBetweenBars)
+      this.spaceBetweenBars / 2 +
+      barIndex * (this.barWidth + this.spaceBetweenBars)
     )
   }
 }

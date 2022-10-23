@@ -1,22 +1,44 @@
 <template>
-  <div ref="canvas"></div>
+  <div class="canvas-container">
+    <div ref="canvas" class="canvas"></div>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, onMounted, PropType, ref, watch } from 'vue'
 import p5 from 'p5'
 
 import { SortingSnapshot } from '@/lib/domain/Sorter'
 import {
   BarchartBar,
-  BarchartViewModel,
-} from '@/lib/view-models/BarchartViewModel'
+  BarchartCalculator,
+} from '@/lib/view-models/BarchartCalculator'
 
-const CANVAS_SIZE = { width: 900, height: 400 }
-const BAR_PADDING = 2
+function calculateBars(snapshot: SortingSnapshot, canvas: p5) {
+  return new BarchartCalculator(snapshot, canvas)
+    .withSpaceBetweenBars(2)
+    .calculateBars()
+}
 
-type ComponentData = {
-  canvas?: p5
+function drawSingleBar(canvas: p5, bar: BarchartBar) {
+  const color = canvas.color(bar.color)
+  canvas.stroke(color)
+  canvas.fill(color)
+  canvas.rect(bar.x, bar.y, bar.width, bar.height)
+}
+
+function createCanvas(el: HTMLElement, snapshot: () => SortingSnapshot) {
+  const s = (p: p5) => {
+    p.setup = () => {
+      p.createCanvas(el.clientWidth, el.clientHeight)
+      p.noLoop()
+    }
+    p.draw = () => {
+      p.clear(0, 0, 0, 0)
+      calculateBars(snapshot(), p).forEach((bar) => drawSingleBar(p, bar))
+    }
+  }
+  return new p5(s, el)
 }
 
 export default defineComponent({
@@ -25,53 +47,26 @@ export default defineComponent({
     snapshot: { type: Object as PropType<SortingSnapshot>, required: true },
   },
 
-  data(): ComponentData {
-    return {}
-  },
+  setup(props) {
+    const canvasEl = ref()
+    const snapshot = () => props.snapshot
 
-  mounted() {
-    this.canvas = this.createCanvas(this.$refs.canvas as HTMLElement)
-  },
+    onMounted(() => {
+      const canvas = createCanvas(canvasEl.value, snapshot)
+      watch(snapshot, () => canvas.redraw())
+    })
 
-  computed: {
-    viewModel(): BarchartViewModel {
-      const viewModel = new BarchartViewModel(this.snapshot, CANVAS_SIZE)
-      viewModel.spaceBetweenBars = BAR_PADDING
-      return viewModel
-    },
-
-    bars() {
-      return this.viewModel.bars
-    },
-  },
-
-  watch: {
-    bars() {
-      this.canvas?.redraw()
-    },
-  },
-
-  methods: {
-    createCanvas(el: HTMLElement) {
-      const s = (p: p5) => {
-        p.setup = () => {
-          p.createCanvas(CANVAS_SIZE.width, CANVAS_SIZE.height)
-          p.noLoop()
-        }
-        p.draw = () => {
-          p.background(220)
-          this.viewModel.bars.forEach(this.drawSingleBar.bind(this, p))
-        }
-      }
-      return new p5(s, el)
-    },
-
-    drawSingleBar(canvas: p5, bar: BarchartBar) {
-      const color = canvas.color(bar.color)
-      canvas.stroke(color)
-      canvas.fill(color)
-      canvas.rect(bar.x, bar.y, bar.width, bar.height)
-    },
+    return { canvas: canvasEl }
   },
 })
 </script>
+
+<style scoped>
+.canvas-container {
+  display: flex;
+  align-items: stretch;
+}
+.canvas {
+  flex-grow: 1;
+}
+</style>

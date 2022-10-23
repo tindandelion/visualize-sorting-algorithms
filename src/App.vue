@@ -1,10 +1,10 @@
 <template>
-  <the-canvas :snapshot="snapshot" />
+  <barchart-canvas :snapshot="snapshot" class="barchart-canvas" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import TheCanvas from './components/BarchartCanvas.vue'
+import BarchartCanvas from './components/BarchartCanvas.vue'
 import { SelectionSorter } from './lib/domain/SelectionSorter'
 
 function generateDataPoints(n: number, maxValue: number) {
@@ -16,7 +16,7 @@ const SORT_INTERVAL = 100
 export default defineComponent({
   name: 'App',
   components: {
-    TheCanvas,
+    BarchartCanvas,
   },
 
   data() {
@@ -35,7 +35,7 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style scoped>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -43,5 +43,11 @@ export default defineComponent({
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+.barchart-canvas {
+  min-height: 400px;
+  background-color: #f0f0f0;
+  padding: 12px;
 }
 </style>

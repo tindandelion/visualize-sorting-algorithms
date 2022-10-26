@@ -20,8 +20,9 @@ describe('Selection sorter', () => {
     sorter.step()
     const snapshot = sorter.takeSnapshot()
 
-    expect(snapshot.data).toEqual([1, 3, 4, 5, 2])
-    expect(snapshot.currentIndex).toEqual(1)
+    expect(snapshot.data).toEqual([5, 3, 4, 1, 2])
+    expect(snapshot.currentIndex).toEqual(0)
+    expect(snapshot.comparedPair).toEqual([1, 2])
     expect(sorter.isFinished).toEqual(false)
   })
 

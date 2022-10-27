@@ -14,6 +14,7 @@ interface Size {
 }
 
 export class BarchartCalculator {
+  private readonly startHue = 50
   private spaceBetweenBars = 0
   private barWidth = 0
 
@@ -50,9 +51,21 @@ export class BarchartCalculator {
   }
 
   private pickBarColor(value: number, index: number) {
-    const hue = (value / this.maxValue) * 255
-    const saturation = index < this.snapshot.currentIndex ? 100 : 30
+    if (this.isBeingCompared(index)) return `hsb(0, 100%, 100%)`
+
+    const hue = (value / this.maxValue) * (255 - this.startHue) + this.startHue
+    const saturation = this.isInHighlightedRange(index) ? 100 : 50
     return `hsb(${hue.toFixed(0)}, ${saturation}%, 100%)`
+  }
+
+  isInHighlightedRange(index: number) {
+    if (!this.snapshot.highlightedRange) return 0
+    const [start, end] = this.snapshot.highlightedRange
+    return start <= index && end >= index
+  }
+
+  isBeingCompared(index: number) {
+    return this.snapshot.comparedPair.includes(index)
   }
 
   private calcPosX(barIndex: number) {

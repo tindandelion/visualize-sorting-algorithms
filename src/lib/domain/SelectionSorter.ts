@@ -72,7 +72,7 @@ export class SelectionSorter {
     return {
       data: [...this.data],
       comparedPair: [this.currentStep.accum, this.currentStep.current],
-      currentIndex: this.currentStep.context.startIndex,
+      highlightedRange: [0, this.currentStep.context.startIndex - 1],
     }
   }
 

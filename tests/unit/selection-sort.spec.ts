@@ -12,7 +12,7 @@ describe('Selection sorter', () => {
     const snapshot = sorter.takeSnapshot()
 
     expect(snapshot.data).toEqual(array)
-    expect(snapshot.currentIndex).toEqual(0)
+    expect(snapshot.highlightedRange).toEqual([0, -1])
     expect(sorter.isFinished).toEqual(false)
   })
 
@@ -21,7 +21,6 @@ describe('Selection sorter', () => {
     const snapshot = sorter.takeSnapshot()
 
     expect(snapshot.data).toEqual([5, 3, 4, 1, 2])
-    expect(snapshot.currentIndex).toEqual(0)
     expect(snapshot.comparedPair).toEqual([1, 2])
     expect(sorter.isFinished).toEqual(false)
   })
@@ -34,6 +33,6 @@ describe('Selection sorter', () => {
     const snapshot = sorter.takeSnapshot()
 
     expect(snapshot.data).toEqual([1, 2, 3, 4, 5])
-    expect(snapshot.currentIndex).toEqual(5)
+    expect(snapshot.highlightedRange).toEqual([0, 4])
   })
 })

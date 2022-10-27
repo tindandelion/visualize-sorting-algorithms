@@ -11,7 +11,7 @@ function generateDataPoints(n: number, maxValue: number) {
   return [...new Array(n).keys()].map(() => Math.random() * maxValue)
 }
 
-const SORT_INTERVAL = 10
+const SORT_INTERVAL = 50
 
 export default defineComponent({
   name: 'App',

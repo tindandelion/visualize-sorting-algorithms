@@ -1,82 +1,59 @@
 import { SortingSnapshot } from './Sorter'
 
-function swap<T>(array: T[], i: number, j: number) {
-  const temp = array[i]
-  array[i] = array[j]
-  array[j] = temp
-}
-
-export class IterationContext<T> {
-  constructor(readonly array: T[], readonly startIndex: number) {}
-
-  nextIteration() {
-    return new IterationContext(this.array, this.startIndex + 1)
-  }
-}
-
-export class ComparisonStep<T> {
-  static startIteration<T>(context: IterationContext<T>): ComparisonStep<T> {
-    return new ComparisonStep(
-      context,
-      context.startIndex,
-      context.startIndex + 1
-    )
-  }
-  constructor(
-    readonly context: IterationContext<T>,
-    readonly accum: number,
-    readonly current: number
-  ) {}
-
-  get isEvaluable() {
-    return this.current <= this.context.array.length
+function* selectionSorter<T>(array: T[]): Generator<SortingSnapshot> {
+  function* findSmallestIndex(start: number) {
+    let cur = start
+    for (let j = start + 1; j < array.length; j++) {
+      yield {
+        data: [...array],
+        comparedPair: [cur, j],
+        highlightedRange: [0, start - 1],
+      } as SortingSnapshot
+      if (array[j] < array[cur]) cur = j
+    }
+    return cur
   }
 
-  eval(): ComparisonStep<T> {
-    if (this.current === this.context.array.length) {
-      return this.startNewIteration()
-    } else return this.continueComparing()
+  function swap(i: number, j: number) {
+    const temp = array[i]
+    array[i] = array[j]
+    array[j] = temp
   }
 
-  private compare() {
-    return this.context.array[this.current] < this.context.array[this.accum]
-  }
-
-  private startNewIteration() {
-    swap(this.context.array, this.accum, this.context.startIndex)
-    return ComparisonStep.startIteration(this.context.nextIteration())
-  }
-
-  private continueComparing() {
-    return new ComparisonStep(
-      this.context,
-      this.compare() ? this.current : this.accum,
-      this.current + 1
-    )
+  for (let i = 0; i < array.length; i++) {
+    const minIndex = yield* findSmallestIndex(i)
+    swap(i, minIndex)
   }
 }
 
 export class SelectionSorter {
-  private currentStep: ComparisonStep<number>
-  constructor(readonly data: number[]) {
-    this.currentStep = ComparisonStep.startIteration(
-      new IterationContext(data, 0)
-    )
+  private readonly data: number[]
+  private readonly generator: Generator<SortingSnapshot>
+  private currentResult: IteratorResult<SortingSnapshot>
+
+  constructor(data: number[]) {
+    this.data = [...data]
+    this.generator = selectionSorter(this.data)
+    this.currentResult = this.generator.next()
   }
 
   step() {
-    this.currentStep = this.currentStep.eval()
+    this.currentResult = this.generator.next()
   }
 
   takeSnapshot(): SortingSnapshot {
-    return {
-      data: [...this.data],
-      comparedPair: [this.currentStep.accum, this.currentStep.current],
-      highlightedRange: [0, this.currentStep.context.startIndex - 1],
-    }
+    return this.isFinished ? this.finalSnapshot : this.currentResult.value
   }
 
   get isFinished() {
-    return !this.currentStep.isEvaluable
+    return this.currentResult.done
+  }
+
+  private get finalSnapshot() {
+    return {
+      data: [...this.data],
+      comparedPair: [-1, -1],
+      highlightedRange: [0, this.data.length - 1],
+    }
   }
 }

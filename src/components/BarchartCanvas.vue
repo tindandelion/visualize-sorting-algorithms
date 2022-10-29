@@ -14,7 +14,7 @@ import {
   BarchartCalculator,
 } from '@/lib/view-models/BarchartCalculator'
 
-function calculateBars(snapshot: SortingSnapshot, canvas: p5) {
+function calculateBars(snapshot: SortingSnapshot<number>, canvas: p5) {
   return new BarchartCalculator(snapshot, canvas)
     .withSpaceBetweenBars(2)
     .calculateBars()
@@ -27,7 +27,10 @@ function drawSingleBar(canvas: p5, bar: BarchartBar) {
   canvas.rect(bar.x, bar.y, bar.width, bar.height)
 }
 
-function createCanvas(el: HTMLElement, snapshot: () => SortingSnapshot) {
+function createCanvas(
+  el: HTMLElement,
+  snapshot: () => SortingSnapshot<number>
+) {
   const s = (p: p5) => {
     p.setup = () => {
       p.createCanvas(el.clientWidth, el.clientHeight)
@@ -44,7 +47,10 @@ function createCanvas(el: HTMLElement, snapshot: () => SortingSnapshot) {
 export default defineComponent({
   name: 'BarchartCanvas',
   props: {
-    snapshot: { type: Object as PropType<SortingSnapshot>, required: true },
+    snapshot: {
+      type: Object as PropType<SortingSnapshot<number>>,
+      required: true,
+    },
   },
 
   setup(props) {

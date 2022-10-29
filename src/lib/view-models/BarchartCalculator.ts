@@ -22,7 +22,7 @@ export class BarchartCalculator {
   private readonly heightScaleFactor: number
 
   constructor(
-    private readonly snapshot: SortingSnapshot,
+    private readonly snapshot: SortingSnapshot<number>,
     private readonly canvasSize: Size
   ) {
     this.maxValue = Math.max(...this.snapshot.data)

@@ -1,4 +1,4 @@
-import { SortingSnapshot } from './Sorter'
+import { IndexPair, SortingSnapshot } from './Sorter'
 
 function swap(array: unknown[], i: number, j: number) {
   const temp = array[i]
@@ -6,15 +6,15 @@ function swap(array: unknown[], i: number, j: number) {
   array[j] = temp
 }
 
-function* selectionSorter<T>(array: T[]): Generator<SortingSnapshot> {
+function* selectionSorter<T>(array: T[]): Generator<SortingSnapshot<T>> {
   function* findSmallestIndex(start: number) {
     let cur = start
     for (let j = start + 1; j < array.length; j++) {
       yield {
         data: [...array],
-        comparedPair: [cur, j],
-        highlightedRange: [0, start - 1],
-      } as SortingSnapshot
+        comparedPair: [cur, j] as IndexPair,
+        highlightedRange: [0, start - 1] as IndexPair,
+      }
       if (array[j] < array[cur]) cur = j
     }
     return cur
@@ -28,8 +28,8 @@ function* selectionSorter<T>(array: T[]): Generator<SortingSnapshot> {
 
 export class SelectionSorter {
   private readonly data: number[]
-  private readonly generator: Generator<SortingSnapshot>
-  private currentResult: IteratorResult<SortingSnapshot>
+  private readonly generator: Generator<SortingSnapshot<number>>
+  private currentResult: IteratorResult<SortingSnapshot<number>>
 
   constructor(data: number[]) {
     this.data = [...data]
@@ -41,7 +41,7 @@ export class SelectionSorter {
     this.currentResult = this.generator.next()
   }
 
-  takeSnapshot(): SortingSnapshot {
+  takeSnapshot(): SortingSnapshot<number> {
     return this.isFinished ? this.finalSnapshot : this.currentResult.value
   }
 

@@ -1,5 +1,9 @@
-export interface SortingSnapshot {
-  readonly data: number[]
-  readonly comparedPair: [number, number]
-  readonly highlightedRange?: [number, number]
+export type Index = number
+
+export type IndexPair = [Index, Index]
+
+export interface SortingSnapshot<T> {
+  readonly data: T[]
+  readonly comparedPair: IndexPair
+  readonly highlightedRange?: IndexPair
 }

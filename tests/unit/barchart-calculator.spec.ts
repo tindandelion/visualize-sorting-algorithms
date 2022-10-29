@@ -3,7 +3,7 @@ import { BarchartCalculator } from '@/lib/view-models/BarchartCalculator'
 
 describe('BarchartViewModel', () => {
   const canvasSize = { width: 30, height: 100 }
-  const snapshot: SortingSnapshot = {
+  const snapshot: SortingSnapshot<number> = {
     data: [0, 0.5, 1],
     comparedPair: [-1, -1] as [number, number],
     highlightedRange: [-1, -1] as [number, number],
@@ -57,7 +57,7 @@ describe('BarchartViewModel', () => {
     })
 
     it('highlights compared elements in red', () => {
-      const s: SortingSnapshot = { ...snapshot, comparedPair: [0, 2] }
+      const s: SortingSnapshot<number> = { ...snapshot, comparedPair: [0, 2] }
       const model = new BarchartCalculator(s, canvasSize)
 
       expect(model.calculateBars()).toMatchObject([
@@ -68,7 +68,10 @@ describe('BarchartViewModel', () => {
     })
 
     it('highlights the specified range with 100% saturation', () => {
-      const s: SortingSnapshot = { ...snapshot, highlightedRange: [0, 1] }
+      const s: SortingSnapshot<number> = {
+        ...snapshot,
+        highlightedRange: [0, 1],
+      }
       const model = new BarchartCalculator(s, canvasSize)
 
       expect(model.calculateBars()).toMatchObject([

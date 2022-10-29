@@ -8,7 +8,7 @@ export function* selectionSorter<T>(array: T[]): Generator<SortingSnapshot<T>> {
       yield {
         data: [...array],
         comparedPair: [cur, j] as IndexPair,
-        highlightedRange: [0, start - 1] as IndexPair,
+        highlightedRange: [start, array.length - 1] as IndexPair,
       }
       if (array[j] < array[cur]) cur = j
     }

@@ -1,14 +1,34 @@
 <template>
-  <barchart-canvas :snapshot="snapshot" class="barchart-canvas" />
+  <barchart-canvas
+    v-for="(snapshot, index) in snapshots"
+    :snapshot="snapshot"
+    :key="index"
+    class="barchart-canvas"
+  />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, onMounted, ref } from 'vue'
 import BarchartCanvas from './components/BarchartCanvas.vue'
-import { SelectionSorter } from './lib/domain/sorters'
+import { NumberSorter } from './lib/domain/NumberSorter'
+import { SelectionSorter, QuicksortSorter } from './lib/domain/sorters'
 
 function generateDataPoints(n: number, maxValue: number) {
   return [...new Array(n).keys()].map(() => Math.random() * maxValue)
+}
+
+function makeStep(sorters: NumberSorter[]) {
+  sorters.forEach((s) => {
+    if (!s.isFinished) s.step()
+  })
+}
+
+function takeSnapshots(sorters: NumberSorter[]) {
+  return sorters.map((s) => s.takeSnapshot())
+}
+
+function allFinished(sorters: NumberSorter[]) {
+  return sorters.every((s) => s.isFinished)
 }
 
 const SORT_INTERVAL = 50
@@ -19,18 +39,23 @@ export default defineComponent({
     BarchartCanvas,
   },
 
-  data() {
+  setup() {
     const dataPoints = generateDataPoints(200, 1)
-    const sorter = new SelectionSorter(dataPoints)
-    return { sorter, snapshot: sorter.takeSnapshot() }
-  },
+    const sorters = [
+      new SelectionSorter([...dataPoints]),
+      new QuicksortSorter([...dataPoints]),
+    ]
+    const snapshots = ref(takeSnapshots(sorters))
 
-  mounted() {
-    const interval = setInterval(() => {
-      this.sorter.step()
-      this.snapshot = this.sorter.takeSnapshot()
-      if (this.sorter.isFinished) clearInterval(interval)
-    }, SORT_INTERVAL)
+    onMounted(() => {
+      const interval = setInterval(() => {
+        makeStep(sorters)
+        snapshots.value = takeSnapshots(sorters)
+        if (allFinished(sorters)) clearInterval(interval)
+      }, SORT_INTERVAL)
+    })
+
+    return { snapshots }
   },
 })
 </script>

@@ -12,7 +12,7 @@ describe('Selection sorter', () => {
     const snapshot = sorter.takeSnapshot()
 
     expect(snapshot.data).toEqual(array)
-    expect(snapshot.highlightedRange).toEqual([0, -1])
+    expect(snapshot.highlightedRange).toEqual([0, array.length - 1])
     expect(sorter.isFinished).toEqual(false)
   })
 
@@ -33,7 +33,7 @@ describe('Selection sorter', () => {
     const snapshot = sorter.takeSnapshot()
 
     expect(snapshot.data).toEqual([1, 2, 3, 4, 5])
-    expect(snapshot.highlightedRange).toEqual([0, 4])
+    expect(snapshot.highlightedRange).toEqual([0, array.length - 1])
   })
 })
 
@@ -49,7 +49,7 @@ describe(QuicksortSorter, () => {
     const snapshot = sorter.takeSnapshot()
 
     expect(snapshot.data).toEqual(array)
-    expect(snapshot.highlightedRange).toEqual([0, 4])
+    expect(snapshot.highlightedRange).toEqual([0, array.length - 1])
     expect(sorter.isFinished).toEqual(false)
   })
 
@@ -70,6 +70,6 @@ describe(QuicksortSorter, () => {
     const snapshot = sorter.takeSnapshot()
 
     expect(snapshot.data).toEqual([1, 2, 3, 4, 5])
-    expect(snapshot.highlightedRange).toEqual([0, 4])
+    expect(snapshot.highlightedRange).toEqual([0, array.length - 1])
   })
 })

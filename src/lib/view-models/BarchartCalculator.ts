@@ -54,7 +54,7 @@ export class BarchartCalculator {
     if (this.isBeingCompared(index)) return `hsb(0, 100%, 100%)`
 
     const hue = (value / this.maxValue) * (255 - this.startHue) + this.startHue
-    const saturation = this.isInHighlightedRange(index) ? 100 : 50
+    const saturation = this.isInHighlightedRange(index) ? 100 : 25
     return `hsb(${hue.toFixed(0)}, ${saturation}%, 100%)`
   }
 

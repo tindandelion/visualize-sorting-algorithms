@@ -50,9 +50,9 @@ describe('BarchartViewModel', () => {
     it('calculates hue from the value', () => {
       const model = new BarchartCalculator(snapshot, canvasSize)
       expect(model.calculateBars()).toMatchObject([
-        { color: 'hsb(50, 50%, 100%)' },
-        { color: 'hsb(153, 50%, 100%)' },
-        { color: 'hsb(255, 50%, 100%)' },
+        { color: 'hsb(50, 25%, 100%)' },
+        { color: 'hsb(153, 25%, 100%)' },
+        { color: 'hsb(255, 25%, 100%)' },
       ])
     })
 
@@ -62,7 +62,7 @@ describe('BarchartViewModel', () => {
 
       expect(model.calculateBars()).toMatchObject([
         { color: 'hsb(0, 100%, 100%)' },
-        { color: 'hsb(153, 50%, 100%)' },
+        { color: 'hsb(153, 25%, 100%)' },
         { color: 'hsb(0, 100%, 100%)' },
       ])
     })
@@ -77,7 +77,7 @@ describe('BarchartViewModel', () => {
       expect(model.calculateBars()).toMatchObject([
         { color: 'hsb(50, 100%, 100%)' },
         { color: 'hsb(153, 100%, 100%)' },
-        { color: 'hsb(255, 50%, 100%)' },
+        { color: 'hsb(255, 25%, 100%)' },
       ])
     })
   })

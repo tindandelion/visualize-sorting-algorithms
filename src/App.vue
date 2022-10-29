@@ -12,6 +12,7 @@ import { defineComponent, onMounted, ref } from 'vue'
 import BarchartCanvas from './components/BarchartCanvas.vue'
 import { NumberSorter } from './lib/domain/NumberSorter'
 import { SelectionSorter, QuicksortSorter } from './lib/domain/sorters'
+import { bubblesortSorter } from './lib/domain/sorting-algorithms/bubblesort'
 
 function generateDataPoints(n: number, maxValue: number) {
   return [...new Array(n).keys()].map(() => Math.random() * maxValue)
@@ -42,8 +43,9 @@ export default defineComponent({
   setup() {
     const dataPoints = generateDataPoints(200, 1)
     const sorters = [
-      new SelectionSorter([...dataPoints]),
-      new QuicksortSorter([...dataPoints]),
+      new NumberSorter(dataPoints, bubblesortSorter),
+      new SelectionSorter(dataPoints),
+      new QuicksortSorter(dataPoints),
     ]
     const snapshots = ref(takeSnapshots(sorters))
 
@@ -71,7 +73,7 @@ export default defineComponent({
 }
 
 .barchart-canvas {
-  min-height: 400px;
+  min-height: 300px;
   background-color: #f0f0f0;
   padding: 12px;
 }

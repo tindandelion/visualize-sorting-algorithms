@@ -1,5 +1,11 @@
 import { SortingSnapshot } from './Sorter'
 
+function swap(array: unknown[], i: number, j: number) {
+  const temp = array[i]
+  array[i] = array[j]
+  array[j] = temp
+}
+
 function* selectionSorter<T>(array: T[]): Generator<SortingSnapshot> {
   function* findSmallestIndex(start: number) {
     let cur = start
@@ -14,15 +20,9 @@ function* selectionSorter<T>(array: T[]): Generator<SortingSnapshot> {
     return cur
   }
 
-  function swap(i: number, j: number) {
-    const temp = array[i]
-    array[i] = array[j]
-    array[j] = temp
-  }
-
   for (let i = 0; i < array.length; i++) {
     const minIndex = yield* findSmallestIndex(i)
-    swap(i, minIndex)
+    swap(array, i, minIndex)
   }
 }
 

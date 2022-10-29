@@ -5,7 +5,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import BarchartCanvas from './components/BarchartCanvas.vue'
-import { SelectionSorter } from './lib/domain/SelectionSorter'
+import { SelectionSorter } from './lib/domain/sorters'
 
 function generateDataPoints(n: number, maxValue: number) {
   return [...new Array(n).keys()].map(() => Math.random() * maxValue)

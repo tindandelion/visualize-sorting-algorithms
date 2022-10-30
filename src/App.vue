@@ -32,7 +32,7 @@ function allFinished(sorters: NumberSorter[]) {
   return sorters.every((s) => s.isFinished)
 }
 
-const SORT_INTERVAL = 50
+const SORT_INTERVAL = 25
 
 export default defineComponent({
   name: 'App',
@@ -73,7 +73,7 @@ export default defineComponent({
 }
 
 .barchart-canvas {
-  min-height: 300px;
+  min-height: 200px;
   background-color: #f0f0f0;
   padding: 12px;
 }

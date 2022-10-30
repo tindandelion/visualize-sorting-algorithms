@@ -1,5 +1,5 @@
 <template>
-  <div class="canvas-container">
+  <div class="canvas-container" ref="container">
     <div ref="canvas" class="canvas"></div>
   </div>
 </template>
@@ -44,6 +44,10 @@ function createCanvas(
   return new p5(s, el)
 }
 
+function resizeCanvas(canvas: p5, contentRect: DOMRectReadOnly) {
+  canvas.resizeCanvas(contentRect.width, canvas.height)
+}
+
 export default defineComponent({
   name: 'BarchartCanvas',
   props: {
@@ -55,14 +59,18 @@ export default defineComponent({
 
   setup(props) {
     const canvasEl = ref()
+    const containerEl = ref()
     const snapshot = () => props.snapshot
 
     onMounted(() => {
       const canvas = createCanvas(canvasEl.value, snapshot)
       watch(snapshot, () => canvas.redraw())
+      new ResizeObserver(([entry]) =>
+        resizeCanvas(canvas, entry.contentRect)
+      ).observe(containerEl.value)
     })
 
-    return { canvas: canvasEl }
+    return { canvas: canvasEl, container: containerEl }
   },
 })
 </script>

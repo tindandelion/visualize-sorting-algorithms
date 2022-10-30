@@ -4,13 +4,13 @@ describe('Quicksort implementation', () => {
   it('does the partitioning in one go', () => {
     const data = [...'KRATELEPUIMQCXOS']
 
-    for (let x of partition(data, 0, data.length - 1));
+    for (let _ of partition(data, 0, data.length - 1));
     expect(toString(data)).toEqual('ECAIEKLPUTMQRXOS')
   })
 
   it('sorts the subranges', () => {
     const data = [...'KRATELEPUIMQCXOS']
-    for (let x of quicksort(data, 0, data.length - 1));
+    for (let _ of quicksort(data, 0, data.length - 1));
     expect(toString(data)).toEqual('ACEEIKLMOPQRSTUX')
   })
 })

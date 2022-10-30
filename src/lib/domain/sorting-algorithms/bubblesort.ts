@@ -2,8 +2,7 @@ import { SortingSnapshot } from '../Sorter'
 import { swap } from './common'
 
 export function* bubblesortSorter<T>(data: T[]): Generator<SortingSnapshot<T>> {
-  let n = data.length
-  while (true) {
+  for (let n = data.length; n > 0; n--) {
     let swapped = false
     for (let i = 1; i < n; i++) {
       if (data[i - 1] > data[i]) {
@@ -16,7 +15,6 @@ export function* bubblesortSorter<T>(data: T[]): Generator<SortingSnapshot<T>> {
         highlightedRange: [0, n - 1],
       }
     }
-    n--
     if (!swapped) break
   }
 }

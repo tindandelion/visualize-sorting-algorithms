@@ -1,11 +1,13 @@
-import { QuicksortSorter, SelectionSorter } from '@/lib/domain/sorters'
+import { NumberSorter } from '@/lib/domain/NumberSorter'
+import { quicksortSorter } from '@/lib/domain/sorting-algorithms/quicksort'
+import { selectionSorter } from '@/lib/domain/sorting-algorithms/selection-sort'
 
 describe('Selection sorter', () => {
   const array = [5, 3, 4, 1, 2]
-  let sorter: SelectionSorter
+  let sorter: NumberSorter
 
   beforeEach(() => {
-    sorter = new SelectionSorter([...array])
+    sorter = new NumberSorter(array, selectionSorter)
   })
 
   it('initializes sorter', () => {
@@ -26,9 +28,6 @@ describe('Selection sorter', () => {
   })
 
   it('sorts the entire array', () => {
-    const array = [5, 3, 4, 1, 2]
-    const sorter = new SelectionSorter(array)
-
     while (!sorter.isFinished) sorter.step()
     const snapshot = sorter.takeSnapshot()
 
@@ -37,12 +36,12 @@ describe('Selection sorter', () => {
   })
 })
 
-describe(QuicksortSorter, () => {
+describe('Quicksort sorter', () => {
   const array = [5, 3, 4, 1, 2]
-  let sorter: QuicksortSorter
+  let sorter: NumberSorter
 
   beforeEach(() => {
-    sorter = new QuicksortSorter([...array])
+    sorter = new NumberSorter(array, quicksortSorter)
   })
 
   it('initializes sorter', () => {
@@ -63,9 +62,6 @@ describe(QuicksortSorter, () => {
   })
 
   it('sorts the entire array', () => {
-    const array = [5, 3, 4, 1, 2]
-    const sorter = new QuicksortSorter(array)
-
     while (!sorter.isFinished) sorter.step()
     const snapshot = sorter.takeSnapshot()
 

@@ -1,18 +1,27 @@
 <template>
-  <barchart-canvas
-    v-for="(snapshot, index) in snapshots"
-    :snapshot="snapshot"
-    :key="index"
-    class="barchart-canvas"
-  />
+  <div class="container">
+    <template v-for="(snapshot, index) in snapshots" :key="index">
+      <div class="row mt-3">
+        <div
+          class="col-12 col-lg-3 d-lg-flex justify-content-end align-items-center"
+        >
+          <h1 class="text-center text-lg-end">{{ labels[index] }}</h1>
+        </div>
+        <div class="col-12 col-lg-9">
+          <barchart-canvas :snapshot="snapshot" class="barchart-canvas" />
+        </div>
+      </div>
+    </template>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
 import BarchartCanvas from './components/BarchartCanvas.vue'
 import { NumberSorter } from './lib/domain/NumberSorter'
-import { SelectionSorter, QuicksortSorter } from './lib/domain/sorters'
 import { bubblesortSorter } from './lib/domain/sorting-algorithms/bubblesort'
+import { quicksortSorter } from './lib/domain/sorting-algorithms/quicksort'
+import { selectionSorter } from './lib/domain/sorting-algorithms/selection-sort'
 
 function generateDataPoints(n: number, maxValue: number) {
   return [...new Array(n).keys()].map(() => Math.random() * maxValue)
@@ -33,6 +42,11 @@ function allFinished(sorters: NumberSorter[]) {
 }
 
 const SORT_INTERVAL = 25
+const SORTER_ALGORITHMS = [
+  { name: 'Bubblesort', sorter: bubblesortSorter },
+  { name: 'Selection sort', sorter: selectionSorter },
+  { name: 'Quicksort', sorter: quicksortSorter },
+]
 
 export default defineComponent({
   name: 'App',
@@ -42,12 +56,11 @@ export default defineComponent({
 
   setup() {
     const dataPoints = generateDataPoints(200, 1)
-    const sorters = [
-      new NumberSorter(dataPoints, bubblesortSorter),
-      new SelectionSorter(dataPoints),
-      new QuicksortSorter(dataPoints),
-    ]
+    const sorters = SORTER_ALGORITHMS.map(
+      ({ sorter }) => new NumberSorter(dataPoints, sorter)
+    )
     const snapshots = ref(takeSnapshots(sorters))
+    const labels = SORTER_ALGORITHMS.map(({ name }) => name)
 
     onMounted(() => {
       const interval = setInterval(() => {
@@ -57,7 +70,7 @@ export default defineComponent({
       }, SORT_INTERVAL)
     })
 
-    return { snapshots }
+    return { snapshots, labels }
   },
 })
 </script>

@@ -1,29 +1,6 @@
-# p5-tutorial
+# Visualize the work of different sorting algorithms
 
-## Project setup
-```
-npm install
-```
+This is a simple project to show how different sorting algorithms progress in sorting the array of random numbers.
+See it live [here](http://www.tindandelion.com/visualize-sorting-algorithms/)
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your unit tests
-```
-npm run test:unit
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+![Screenshot](./public/screenshot.png)
